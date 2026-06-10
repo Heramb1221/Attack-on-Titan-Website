@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap');
+
+:root {
+  --void  : #06060a;
+  --bone  : #d4cfc4;
+  --dust  : #7a7570;
+  --red   : #9b1a1a;
+  --gold  : #c4a450;
+  --white : #f0ece4;
+
+  --f-display : 'Cinzel Decorative', serif;
+  --f-cinzel  : 'Cinzel', serif;
+  --f-body    : 'IM Fell English', serif;
+}
+
+/* ── Section shell ───────────────────────────── */
+.oath-section {
+  position   : relative;
+  background : var(--void);
+}
+
+.oath-sticky {
+  position  : sticky;
+  top       : 0;
+  width     : 100vw;
+  height    : 100vh;
+  overflow  : hidden;
+  display   : flex;
+  align-items    : center;
+  justify-content: center;
+}
+
+/* ── Background ──────────────────────────────── */
+.oath-bg {
+  position   : absolute;
+  inset      : 0;
+  background : var(--void);
+  z-index    : 0;
+}
+
+/* Slow vignette pulse */
+.oath-vignette {
+  position   : absolute;
+  inset      : 0;
+  background : radial-gradient(
+    ellipse 75% 75% at 50% 50%,
+    transparent 30%,
+    rgba(6, 6, 10, 0.7) 70%,
+    rgba(6, 6, 10, 0.95) 100%
+  );
+  z-index    : 2;
+  pointer-events : none;
+}
+
+/* Wings of Freedom SVG — rotates slowly */
+.oath-wings-wrap {
+  position   : absolute;
+  inset      : 0;
+  display    : flex;
+  align-items    : center;
+  justify-content: center;
+  z-index    : 1;
+  opacity    : 0;
+}
+.oath-wings-svg {
+  width      : min(70vw, 70vh);
+  height     : min(70vw, 70vh);
+  opacity    : 0.055;
+  filter     : blur(0.5px);
+}
+
+/* ── Grain ───────────────────────────────────── */
+.oath-grain {
+  position         : absolute;
+  inset            : -20%;
+  width            : 140%;
+  height           : 140%;
+  background-image : url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity          : 0.04;
+  z-index          : 3;
+  pointer-events   : none;
+  animation        : oath-grain-anim 0.1s steps(1) infinite;
+}
+@keyframes oath-grain-anim {
+  0%  { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 3%); }
+  50% { transform: translate(3%, -2%); }
+  75% { transform: translate(-1%, 1%); }
+}
+
+/* ── Main text container ─────────────────────── */
+.oath-text-wrap {
+  position       : relative;
+  z-index        : 10;
+  display        : flex;
+  flex-direction : column;
+  align-items    : center;
+  text-align     : center;
+  gap            : clamp(1rem, 2.5vh, 2rem);
+  padding        : 0 clamp(1.5rem, 6vw, 6rem);
+  pointer-events : none;
+}
+
+/* ── Eyebrow ─────────────────────────────────── */
+.oath-eyebrow {
+  display     : flex;
+  align-items : center;
+  gap         : 1rem;
+  opacity     : 0;
+}
+.oath-eyebrow-rule {
+  width      : 40px;
+  height     : 1px;
+  background : var(--gold);
+  opacity    : 0.5;
+}
+.oath-eyebrow-txt {
+  font-family    : var(--f-cinzel);
+  font-size      : clamp(0.42rem, 0.7vw, 0.58rem);
+  letter-spacing : 0.42em;
+  text-transform : uppercase;
+  color          : var(--gold);
+  opacity        : 0.7;
+}
+
+/* ── Prelude line ────────────────────────────── */
+.oath-prelude {
+  font-family    : var(--f-body);
+  font-style     : italic;
+  font-size      : clamp(0.85rem, 1.5vw, 1.3rem);
+  color          : var(--dust);
+  letter-spacing : 0.12em;
+  line-height    : 1.6;
+  opacity        : 0;
+}
+
+/* ── Word-scatter lines ──────────────────────── */
+.oath-line {
+  display     : flex;
+  flex-wrap   : wrap;
+  justify-content : center;
+  gap         : 0.2em 0.4em;
+  line-height : 1;
+}
+
+/* Each word is a span for individual animation */
+.oath-word {
+  display    : inline-block;
+  opacity    : 0;
+  will-change: transform, opacity, filter;
+}
+
+/* Line 1: "DEDICATE" */
+.oath-line--1 .oath-word {
+  font-family    : var(--f-display);
+  font-weight    : 900;
+  font-size      : clamp(2.4rem, 7.5vw, 8rem);
+  color          : var(--white);
+  text-shadow    : 0 0 80px rgba(155, 26, 26, 0.45);
+  letter-spacing : 0.06em;
+}
+
+/* Line 2: "YOUR" */
+.oath-line--2 .oath-word {
+  font-family    : var(--f-cinzel);
+  font-weight    : 400;
+  font-size      : clamp(1rem, 3vw, 3.2rem);
+  color          : var(--dust);
+  letter-spacing : 0.5em;
+  text-transform : uppercase;
+}
+
+/* Line 3: "HEART" — red, large, dramatic */
+.oath-line--3 .oath-word {
+  font-family    : var(--f-display);
+  font-weight    : 900;
+  font-size      : clamp(3rem, 10vw, 11rem);
+  color          : var(--red);
+  text-shadow    :
+    0 0 120px rgba(155, 26, 26, 0.7),
+    0 0 40px  rgba(155, 26, 26, 0.5);
+  letter-spacing : 0.04em;
+}
+
+/* Line 4: attribution */
+.oath-line--4 .oath-word {
+  font-family    : var(--f-body);
+  font-style     : italic;
+  font-size      : clamp(0.7rem, 1.2vw, 1.05rem);
+  color          : var(--dust);
+  letter-spacing : 0.2em;
+  opacity        : 0;
+}
+
+/* Divider rule between HEART and attribution */
+.oath-divider {
+  width      : 0;
+  height     : 1px;
+  background : linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity    : 0;
+  flex-shrink: 0;
+  align-self : stretch;
+}
+
+/* ── Japanese subtitle ───────────────────────── */
+.oath-jp {
+  font-family    : var(--f-cinzel);
+  font-size      : clamp(0.55rem, 1vw, 0.85rem);
+  letter-spacing : 0.3em;
+  color          : var(--gold);
+  opacity        : 0;
+  text-transform : uppercase;
+}
+
+/* ── Final pulse line ────────────────────────── */
+.oath-final {
+  font-family    : var(--f-display);
+  font-weight    : 900;
+  font-size      : clamp(0.7rem, 1.8vw, 1.6rem);
+  letter-spacing : 0.35em;
+  color          : var(--bone);
+  text-transform : uppercase;
+  opacity        : 0;
+}
+.oath-final--active {
+  animation : oath-pulse 2.2s ease-in-out infinite;
+}
+@keyframes oath-pulse {
+  0%, 100% { opacity: 1;    transform: scale(1); }
+  50%       { opacity: 0.65; transform: scale(1.025); }
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 640px) {
+  .oath-line--1 .oath-word { font-size: clamp(2rem, 14vw, 5rem); }
+  .oath-line--3 .oath-word { font-size: clamp(2.8rem, 18vw, 7rem); }
+  .oath-text-wrap { gap: clamp(0.7rem, 2vh, 1.4rem); }
+}

@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap');
+
+:root {
+  --void  : #06060a;
+  --bone  : #d4cfc4;
+  --dust  : #7a7570;
+  --red   : #9b1a1a;
+  --gold  : #c4a450;
+  --white : #f0ece4;
+
+  --f-display : 'Cinzel Decorative', serif;
+  --f-cinzel  : 'Cinzel', serif;
+  --f-body    : 'IM Fell English', serif;
+}
+
+/* ── Section shell ───────────────────────────── */
+.sc-section {
+  position   : relative;
+  background : var(--void);
+  padding    : clamp(6rem, 14vh, 10rem) 0 clamp(6rem, 14vh, 10rem);
+  overflow   : hidden;
+}
+
+/* ── Watermark wings pattern ─────────────────── */
+.sc-watermark {
+  position       : absolute;
+  inset          : 0;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  pointer-events : none;
+  z-index        : 0;
+  opacity        : 0.028;
+}
+.sc-watermark svg {
+  width  : min(70vw, 60vh);
+  height : min(70vw, 60vh);
+}
+
+/* ── Horizontal rules ────────────────────────── */
+.sc-rule-top,
+.sc-rule-bottom {
+  position   : absolute;
+  left       : 8vw;
+  right      : 8vw;
+  height     : 1px;
+  background : linear-gradient(90deg, transparent, rgba(196,164,80,0.18), transparent);
+}
+.sc-rule-top    { top    : 0; }
+.sc-rule-bottom { bottom : 0; }
+
+/* ── Grain ───────────────────────────────────── */
+.sc-grain {
+  position         : absolute;
+  inset            : -20%;
+  width            : 140%;
+  height           : 140%;
+  background-image : url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity          : 0.032;
+  z-index          : 1;
+  pointer-events   : none;
+  animation        : sc-grain-anim 0.12s steps(1) infinite;
+}
+@keyframes sc-grain-anim {
+  0%  { transform: translate(0,0); }
+  25% { transform: translate(-2%,3%); }
+  50% { transform: translate(3%,-1%); }
+  75% { transform: translate(-1%,2%); }
+}
+
+/* ── Inner wrapper ───────────────────────────── */
+.sc-inner {
+  position : relative;
+  z-index  : 5;
+  max-width: 1400px;
+  margin   : 0 auto;
+  padding  : 0 8vw;
+}
+
+/* ── Header ──────────────────────────────────── */
+.sc-header {
+  display        : flex;
+  flex-direction : column;
+  align-items    : center;
+  gap            : 0.5rem;
+  margin-bottom  : clamp(3rem, 7vh, 5.5rem);
+  opacity        : 0;
+}
+.sc-header-eyebrow {
+  display     : flex;
+  align-items : center;
+  gap         : 1rem;
+}
+.sc-header-rule {
+  width      : 44px;
+  height     : 1px;
+  background : var(--gold);
+  opacity    : 0.45;
+}
+.sc-header-eyebrow-txt {
+  font-family    : var(--f-cinzel);
+  font-size      : clamp(0.42rem, 0.7vw, 0.58rem);
+  letter-spacing : 0.42em;
+  text-transform : uppercase;
+  color          : var(--gold);
+  opacity        : 0.7;
+}
+.sc-header-title {
+  font-family   : var(--f-display);
+  font-weight   : 900;
+  font-size     : clamp(1rem, 2.4vw, 2rem);
+  color         : var(--white);
+  letter-spacing: 0.05em;
+  text-shadow   : 0 0 50px rgba(155,26,26,0.3);
+}
+
+/* ── Stats grid ──────────────────────────────── */
+.sc-grid {
+  display               : grid;
+  grid-template-columns : repeat(3, 1fr);
+  gap                   : clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2vw, 2rem);
+}
+
+/* ── Stat card ───────────────────────────────── */
+.sc-card {
+  position   : relative;
+  padding    : clamp(1.5rem, 3vh, 2.5rem) clamp(1.2rem, 2vw, 2rem);
+  border     : 1px solid rgba(196,164,80,0.1);
+  background : rgba(14,12,18,0.5);
+  opacity    : 0;
+  cursor     : default;
+  transition : border-color 0.35s, background 0.35s;
+  overflow   : hidden;
+}
+.sc-card:hover {
+  border-color : rgba(196,164,80,0.32);
+  background   : rgba(20,16,24,0.7);
+}
+
+/* Glitch hover effect handled via JS class */
+.sc-card--glitch .sc-number {
+  animation : sc-glitch 0.35s steps(1) forwards;
+}
+@keyframes sc-glitch {
+  0%   { filter: blur(0px)  skewX(0deg);   opacity: 1; }
+  15%  { filter: blur(2px)  skewX(4deg);   opacity: 0.7; }
+  30%  { filter: blur(0px)  skewX(-3deg);  opacity: 1; }
+  50%  { filter: blur(1.5px) skewX(2deg);  opacity: 0.8; }
+  70%  { filter: blur(0px)  skewX(0deg);   opacity: 1; }
+  85%  { filter: blur(1px)  skewX(-1deg);  opacity: 0.9; }
+  100% { filter: blur(0px)  skewX(0deg);   opacity: 1; }
+}
+
+/* Corner ornament */
+.sc-card::before {
+  content      : '';
+  position     : absolute;
+  top          : -1px; left: -1px;
+  width        : 10px; height: 10px;
+  border-top   : 1.5px solid rgba(196,164,80,0.4);
+  border-left  : 1.5px solid rgba(196,164,80,0.4);
+  transition   : border-color 0.3s;
+}
+.sc-card:hover::before {
+  border-color : rgba(196,164,80,0.8);
+}
+
+/* Red accent bar at bottom */
+.sc-card-bar {
+  position   : absolute;
+  bottom     : 0; left: 0;
+  height     : 2px;
+  background : var(--red);
+  width      : 0;
+  transition : width 0.6s cubic-bezier(0.2,0,0.2,1);
+}
+.sc-card:hover .sc-card-bar,
+.sc-card--counted .sc-card-bar {
+  width : 100%;
+}
+
+/* ── Number (odometer) ───────────────────────── */
+.sc-number-wrap {
+  display     : flex;
+  align-items : baseline;
+  gap         : 0.2rem;
+  margin-bottom: 0.6rem;
+  line-height : 1;
+}
+
+.sc-number {
+  font-family  : var(--f-display);
+  font-weight  : 900;
+  font-size    : clamp(2.2rem, 5vw, 4.5rem);
+  color        : var(--white);
+  line-height  : 1;
+  letter-spacing: 0.02em;
+  transition   : color 0.3s;
+  min-width    : 2ch;
+}
+.sc-card:hover .sc-number {
+  color : var(--gold);
+}
+
+.sc-suffix {
+  font-family    : var(--f-cinzel);
+  font-weight    : 600;
+  font-size      : clamp(0.8rem, 1.5vw, 1.4rem);
+  color          : var(--gold);
+  opacity        : 0.75;
+  letter-spacing : 0.1em;
+  align-self     : flex-end;
+  padding-bottom : 0.3rem;
+}
+
+/* ── Divider ─────────────────────────────────── */
+.sc-card-divider {
+  width      : 100%;
+  height     : 1px;
+  background : linear-gradient(90deg, rgba(196,164,80,0.2), transparent);
+  margin-bottom: 0.7rem;
+}
+
+/* ── Label ───────────────────────────────────── */
+.sc-label {
+  font-family    : var(--f-cinzel);
+  font-weight    : 700;
+  font-size      : clamp(0.52rem, 0.88vw, 0.75rem);
+  letter-spacing : 0.22em;
+  text-transform : uppercase;
+  color          : var(--bone);
+  margin-bottom  : 0.3rem;
+}
+
+.sc-desc {
+  font-family  : var(--f-body);
+  font-style   : italic;
+  font-size    : clamp(0.55rem, 0.82vw, 0.7rem);
+  color        : var(--dust);
+  line-height  : 1.55;
+}
+
+/* ── Featured card (spans 2 cols) ────────────── */
+.sc-card--featured {
+  grid-column : span 2;
+}
+.sc-card--featured .sc-number {
+  font-size : clamp(3rem, 7.5vw, 7rem);
+}
+
+/* ── Bottom quote ────────────────────────────── */
+.sc-bottom-quote {
+  margin-top   : clamp(3rem, 7vh, 5rem);
+  text-align   : center;
+  opacity      : 0;
+}
+.sc-bottom-quote-text {
+  font-family  : var(--f-body);
+  font-style   : italic;
+  font-size    : clamp(0.8rem, 1.4vw, 1.1rem);
+  color        : var(--dust);
+  line-height  : 1.7;
+  max-width    : 60ch;
+  margin       : 0 auto 0.6rem;
+}
+.sc-bottom-quote-attr {
+  font-family    : var(--f-cinzel);
+  font-size      : clamp(0.42rem, 0.65vw, 0.55rem);
+  letter-spacing : 0.3em;
+  text-transform : uppercase;
+  color          : var(--gold);
+  opacity        : 0.55;
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 900px) {
+  .sc-grid {
+    grid-template-columns : repeat(2, 1fr);
+  }
+  .sc-card--featured { grid-column: span 2; }
+}
+
+@media (max-width: 560px) {
+  .sc-grid {
+    grid-template-columns : 1fr 1fr;
+    gap : 1rem;
+  }
+  .sc-card--featured {
+    grid-column : span 2;
+  }
+  .sc-number { font-size: clamp(1.8rem, 10vw, 3rem); }
+  .sc-card--featured .sc-number { font-size: clamp(2.2rem, 12vw, 4rem); }
+}
