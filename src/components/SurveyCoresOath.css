@@ -38,21 +38,21 @@
   z-index    : 0;
 }
 
-/* Slow vignette pulse */
+/* Vignette to keep edges dark and focus centre */
 .oath-vignette {
   position   : absolute;
   inset      : 0;
   background : radial-gradient(
-    ellipse 75% 75% at 50% 50%,
-    transparent 30%,
-    rgba(6, 6, 10, 0.7) 70%,
+    ellipse 70% 70% at 50% 50%,
+    transparent 25%,
+    rgba(6, 6, 10, 0.65) 65%,
     rgba(6, 6, 10, 0.95) 100%
   );
   z-index    : 2;
   pointer-events : none;
 }
 
-/* Wings of Freedom SVG — rotates slowly */
+/* ── Emblem wrapper — rotated by GSAP ───────── */
 .oath-wings-wrap {
   position   : absolute;
   inset      : 0;
@@ -60,13 +60,28 @@
   align-items    : center;
   justify-content: center;
   z-index    : 1;
+  /* opacity animated by GSAP from 0 */
   opacity    : 0;
 }
-.oath-wings-svg {
-  width      : min(70vw, 70vh);
-  height     : min(70vw, 70vh);
-  opacity    : 0.055;
-  filter     : blur(0.5px);
+
+/* ── The real emblem image ───────────────────── */
+.oath-emblem-img {
+  /* Large enough to fill the section atmosphere */
+  width      : min(72vw, 72vh);
+  height     : min(72vw, 72vh);
+  object-fit : contain;
+  display    : block;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  /*
+    mix-blend-mode: screen  →  white/light areas become invisible against
+    the dark --void background, leaving only the dark linework visible.
+    We then invert with filter so the dark lines become light bone/gold.
+  */
+  mix-blend-mode : screen;
+  filter         : invert(1) sepia(0.25) hue-rotate(10deg) brightness(0.72) contrast(1.1);
+  opacity        : 0.55;
 }
 
 /* ── Grain ───────────────────────────────────── */
@@ -143,7 +158,6 @@
   line-height : 1;
 }
 
-/* Each word is a span for individual animation */
 .oath-word {
   display    : inline-block;
   opacity    : 0;
@@ -170,7 +184,7 @@
   text-transform : uppercase;
 }
 
-/* Line 3: "HEART" — red, large, dramatic */
+/* Line 3: "HEART" */
 .oath-line--3 .oath-word {
   font-family    : var(--f-display);
   font-weight    : 900;
@@ -178,7 +192,7 @@
   color          : var(--red);
   text-shadow    :
     0 0 120px rgba(155, 26, 26, 0.7),
-    0 0 40px  rgba(155, 26, 26, 0.5);
+    0 0  40px rgba(155, 26, 26, 0.5);
   letter-spacing : 0.04em;
 }
 
@@ -192,7 +206,7 @@
   opacity        : 0;
 }
 
-/* Divider rule between HEART and attribution */
+/* Divider rule */
 .oath-divider {
   width      : 0;
   height     : 1px;
@@ -235,4 +249,5 @@
   .oath-line--1 .oath-word { font-size: clamp(2rem, 14vw, 5rem); }
   .oath-line--3 .oath-word { font-size: clamp(2.8rem, 18vw, 7rem); }
   .oath-text-wrap { gap: clamp(0.7rem, 2vh, 1.4rem); }
+  .oath-emblem-img { width: min(90vw, 90vh); height: min(90vw, 90vh); }
 }

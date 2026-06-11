@@ -198,27 +198,24 @@ export default function BattleTimeline() {
       }
     )
 
-    const st = ScrollTrigger.create({
-      trigger   : section,
-      start     : 'top top',
-      end       : `+=${scrollLen}`,
-      scrub     : 1.4,
-      pin       : sticky,
-      pinSpacing: false,
-      onUpdate  : (self) => {
-        if (progressRef.current)
-          progressRef.current.style.width = `${self.progress * 100}%`
-        // Rope draw-in
-        if (ropeProgressRef.current) {
-          const totalLen = ropeProgressRef.current.getTotalLength?.() || 9999
-          ropeProgressRef.current.style.strokeDasharray  = totalLen
-          ropeProgressRef.current.style.strokeDashoffset = totalLen * (1 - self.progress * 1.1)
-        }
-      },
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger   : section,
+        start     : 'top top',
+        end       : `+=${scrollLen}`,
+        scrub     : 1.4,
+        onUpdate  : (self) => {
+          if (progressRef.current)
+            progressRef.current.style.width = `${self.progress * 100}%`
+          // Rope draw-in
+          if (ropeProgressRef.current) {
+            const totalLen = ropeProgressRef.current.getTotalLength?.() || 9999
+            ropeProgressRef.current.style.strokeDasharray  = totalLen
+            ropeProgressRef.current.style.strokeDashoffset = totalLen * (1 - self.progress * 1.1)
+          }
+        },
+      }
     })
-    stRef.current = st
-
-    const tl = gsap.timeline({ scrollTrigger: st })
     tlRef.current = tl
 
     // Track horizontal slide

@@ -87,10 +87,14 @@ export default function SceneGallery() {
     const scrollLen = window.innerHeight * count * PANEL_SCROLL
     section.style.height = `${scrollLen + window.innerHeight}px`
 
-    // Set all panels invisible except first
+    // Initial setup: layer correctly and set the incoming clipPaths
     panelRefs.current.forEach((panel, i) => {
       if (!panel) return
-      gsap.set(panel, { zIndex: count - i, opacity: i === 0 ? 1 : 0 })
+      gsap.set(panel, { 
+        zIndex: i, 
+        opacity: i === 0 ? 1 : 0,
+        clipPath: i === 0 ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)' 
+      })
     })
 
     // Header fade in on approach
@@ -106,7 +110,7 @@ export default function SceneGallery() {
       }
     )
 
-    // Header fades out as first panel properly enters
+    // Header fades out as first panel enters
     gsap.to(headerRef.current, {
       opacity  : 0,
       duration : 0.3,
@@ -117,7 +121,22 @@ export default function SceneGallery() {
       },
     })
 
-    // Per-panel scroll triggers
+    // ONE MASTER TIMELINE (Sequential)
+    const masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger   : section,
+        start     : 'top top',
+        end       : `+=${scrollLen}`,
+        scrub     : 1.2,
+        onUpdate  : (self) => {
+          const prog = self.progress
+          const activeIndex = Math.min(Math.floor(prog * count), count - 1)
+          setActivePanel(activeIndex)
+        },
+      },
+    })
+
+    // Build the sequence logically step-by-step
     SCENES.forEach((scene, i) => {
       const panel    = panelRefs.current[i]
       const imgEl    = imageRefs.current[i]
@@ -125,93 +144,50 @@ export default function SceneGallery() {
       const infoEl   = infoRefs.current[i]
       if (!panel) return
 
-      const panelStart = (i / count)
-      const panelEnd   = ((i + 1) / count)
-      const activeWindow = panelEnd - panelStart
+      const label = `scene${i}`
+      masterTl.add(label)
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger   : section,
-          start     : 'top top',
-          end       : `+=${scrollLen}`,
-          scrub     : 1.2,
-          onUpdate  : (self) => {
-            const prog = self.progress
-            const pStart = i * (1 / count)
-            const pEnd   = (i + 1) * (1 / count)
-            // Determine active panel for dots
-            if (prog >= pStart && prog < pEnd) {
-              setActivePanel(i)
-            }
-          },
-        },
-      })
-
-      // PANEL IN — clip wipe from right
-      if (i > 0) {
-        tl.fromTo(panel,
-          { clipPath: 'inset(0 100% 0 0)', opacity: 1 },
-          {
-            clipPath : 'inset(0 0% 0 0)',
-            opacity  : 1,
-            duration : activeWindow * 0.4,
-            ease     : 'power2.inOut',
-          },
-          panelStart
-        )
-      } else {
-        // First panel — already visible, just handle content
-        tl.set(panel, { clipPath: 'inset(0 0% 0 0)', opacity: 1 }, 0)
-      }
-
-      // Ken Burns — image slow zoom out during active window
+      // 1. Zoom image slowly across the scene's duration
       if (imgEl) {
-        tl.fromTo(imgEl,
-          { scale: 1.1 },
-          { scale: 1.0, duration: activeWindow, ease: 'none' },
-          panelStart
-        )
+        masterTl.to(imgEl, { scale: 1.0, duration: 2.5, ease: 'none' }, label)
       }
 
-      // Quote text reveals
+      // 2. Animate text IN
       if (quoteEl) {
-        const contentIn = panelStart + activeWindow * (i === 0 ? 0.05 : 0.38)
-        tl.fromTo(quoteEl,
+        masterTl.fromTo(quoteEl,
           { opacity: 0, y: 30, filter: 'blur(8px)' },
-          { opacity: 1, y: 0,  filter: 'blur(0px)', duration: activeWindow * 0.25, ease: 'power2.out' },
-          contentIn
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' },
+          label + '+=0.2'
         )
-        // Exit: quote fades out before panel wipes away
-        if (i < count - 1) {
-          tl.to(quoteEl,
-            { opacity: 0, y: -20, filter: 'blur(6px)', duration: activeWindow * 0.15, ease: 'power2.in' },
-            panelEnd - activeWindow * 0.22
-          )
-        }
       }
-
-      // Info bar
       if (infoEl) {
-        const infoIn = panelStart + activeWindow * (i === 0 ? 0.08 : 0.42)
-        tl.fromTo(infoEl,
+        masterTl.fromTo(infoEl,
           { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: activeWindow * 0.2, ease: 'power2.out' },
-          infoIn
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+          label + '+=0.4'
         )
-        if (i < count - 1) {
-          tl.to(infoEl,
-            { opacity: 0, y: -16, duration: activeWindow * 0.12, ease: 'power2.in' },
-            panelEnd - activeWindow * 0.18
-          )
-        }
       }
 
-      // PANEL EXIT — slide left as next panel wipes in
+      // 3. Pause for reading (This empty tween holds the screen still so users can read the text)
+      masterTl.to({}, { duration: 1.0 })
+
+      // 4. Exit animations (Only trigger if there is a next scene to wipe to)
       if (i < count - 1) {
-        tl.to(panel,
-          { x: '-6%', duration: activeWindow * 0.4, ease: 'power2.in' },
-          panelEnd - activeWindow * 0.4
-        )
+        const exitLabel = `exit${i}`
+        masterTl.add(exitLabel)
+
+        // Fade text OUT
+        if (quoteEl) {
+          masterTl.to(quoteEl, { opacity: 0, y: -20, filter: 'blur(6px)', duration: 0.4, ease: 'power2.in' }, exitLabel)
+        }
+        if (infoEl) {
+          masterTl.to(infoEl, { opacity: 0, y: -16, duration: 0.4, ease: 'power2.in' }, exitLabel + '+=0.1')
+        }
+
+        // Wipe NEXT panel IN over CURRENT panel
+        const nextPanel = panelRefs.current[i + 1]
+        masterTl.to(panel, { x: '-6%', duration: 0.8, ease: 'power2.inOut' }, exitLabel + '+=0.4')
+        masterTl.to(nextPanel, { clipPath: 'inset(0 0% 0 0)', opacity: 1, duration: 0.8, ease: 'power2.inOut' }, exitLabel + '+=0.4')
       }
     })
 
